@@ -125,10 +125,16 @@ const HomePage = () => {
         attributionControl: true,
       });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; OpenStreetMap contributors',
-      }).addTo(map);
+      // 瓦片源：OpenStreetMap 在国内访问不稳定（实测 503/超时），改用高德公开瓦片（无需 Key）。
+      // 只取栅格底图，不带业务数据，符合免费/免申请 Key 的使用诉求。
+      L.tileLayer(
+        'https://webrd0{s}.is.autonavi.com/appmaptile?lang=zh_cn&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+        {
+          subdomains: '1234',
+          maxZoom: 18,
+          attribution: '&copy; 高德地图',
+        }
+      ).addTo(map);
 
       const markersLayer = L.layerGroup().addTo(map);
       markersLayerRef.current = markersLayer;
@@ -320,26 +326,23 @@ const HomePage = () => {
           })}
         </div>
 
-        {/* Map area */}
-        <div className="bg-card rounded-xl border border-border overflow-hidden mb-3">
-          {mapLoading ? (
-            <div className="h-[300px] flex flex-col items-center justify-center gap-2 text-muted-foreground">
+        {/* Map area：容器必须常驻渲染，否则首次 effect 拿不到 ref 会永远停在加载态 */}
+        <div className="relative bg-card rounded-xl border border-border overflow-hidden mb-3">
+          <div ref={mapContainerRef} className="w-full h-[300px] bg-muted/50" />
+          {mapLoading && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-card/80 text-muted-foreground">
               <Loader2 size={20} className="animate-spin" />
               <p className="text-xs">地图加载中...</p>
             </div>
-          ) : mapError ? (
-            <div className="h-[300px] flex flex-col items-center justify-center gap-2 p-6 text-center">
+          )}
+          {mapError && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center bg-card">
               <div className="w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center text-destructive">
                 <MapPin size={24} />
               </div>
               <p className="text-sm text-destructive mb-1">地图加载失败</p>
               <p className="text-xs text-muted-foreground mb-2">{mapError}</p>
             </div>
-          ) : (
-            <div
-              ref={mapContainerRef}
-              className="w-full h-[300px] bg-muted/50"
-            />
           )}
         </div>
 
