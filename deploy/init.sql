@@ -48,9 +48,9 @@ CREATE TABLE IF NOT EXISTS parking_lot (
   tags              varchar(255)[] DEFAULT '{}'::varchar(255)[],
 
   _created_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
   _updated_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END)
+  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END)
 );
 
 CREATE INDEX IF NOT EXISTS idx_parking_lot_district ON parking_lot (district);
@@ -66,9 +66,9 @@ CREATE TABLE IF NOT EXISTS parking_rating (
   anonymous_id      varchar(100),
 
   _created_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
   _updated_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
 
   CONSTRAINT parking_rating_parking_id_fkey FOREIGN KEY (parking_id)
     REFERENCES parking_lot (id) ON DELETE CASCADE
@@ -84,9 +84,9 @@ CREATE TABLE IF NOT EXISTS parking_comment (
   anonymous_id      varchar(100),
 
   _created_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
   _updated_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
 
   CONSTRAINT parking_comment_parking_id_fkey FOREIGN KEY (parking_id)
     REFERENCES parking_lot (id) ON DELETE CASCADE
@@ -104,9 +104,9 @@ CREATE TABLE IF NOT EXISTS parking_correction (
   anonymous_id      varchar(100),
 
   _created_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
   _updated_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
 
   CONSTRAINT parking_correction_parking_id_fkey FOREIGN KEY (parking_id)
     REFERENCES parking_lot (id) ON DELETE CASCADE
@@ -135,9 +135,9 @@ CREATE TABLE IF NOT EXISTS merchant_registration (
   anonymous_id      varchar(100),
 
   _created_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
   _updated_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END)
+  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END)
 );
 
 -- ============================ 收藏表 ============================
@@ -147,9 +147,9 @@ CREATE TABLE IF NOT EXISTS parking_favorite (
   anonymous_id      varchar(100),
 
   _created_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _created_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
   _updated_at       timestamptz(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL END),
+  _updated_by       user_profile   DEFAULT (CASE WHEN (current_setting('app.user_id'::text, true) = ''::text) THEN NULL ELSE ROW(current_setting('app.user_id'::text, true))::user_profile END),
 
   CONSTRAINT parking_favorite_parking_id_fkey FOREIGN KEY (parking_id)
     REFERENCES parking_lot (id) ON DELETE CASCADE

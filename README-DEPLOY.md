@@ -275,16 +275,7 @@ CLIENT_BASE_PATH=/parking node scripts/prepare-static-web.mjs
 - `dist/web/index.html` + `dist/web/assets/` —— 交给 nginx 静态托管
 - `dist/server/` —— Node 服务，只需提供 `/api/*`
 
-Node 服务建议单独监听 3100（不占用 80/443）：
-
-```ini
-# /etc/systemd/system/parking.service
-[Service]
-WorkingDirectory=/opt/parking-site
-EnvironmentFile=/opt/parking-site/.env
-ExecStart=/usr/bin/node dist/server/main.js
-# .env 中：SERVER_HOST=127.0.0.1  SERVER_PORT=3100
-```
+Node 服务单独监听 3011（不占用 80/443），用 `deploy/parking.service` 托管，见 8.2。
 
 nginx 片段见 `deploy/nginx-parking.conf`（`location = /parking` 补斜杠、`/parking/assets/` 静态、
 `/parking/api/` 反代并剥前缀、其余回退到 `index.html`）。并入现有 `server{}` 后：
@@ -297,6 +288,30 @@ nginx -t && systemctl reload nginx
 
 > 注意：不要用 Node 的 `ViewController` 渲染入口页。平台会按 appId 推导 basename（得到 `/app/`），
 > 子路径部署下会导致前端路由错乱，因此这里改为静态托管入口页。
+
+### 8.1 数据库角色（必做，否则接口 500）
+
+平台数据层会在每个请求上执行 `SET LOCAL ROLE`：匿名请求用 `anon_`、登录用户用 `authenticated_`、
+系统账号用 `service_role_`。自建库没有这些角色时，接口会报 `role "anon_" does not exist`。
+建表后执行一次：
+
+```bash
+docker exec -i parking-db psql -U parking -d parking -v ON_ERROR_STOP=1 < deploy/pg-roles.sql
+```
+
+### 8.2 服务托管
+
+`deploy/parking.service` 是可直接使用的 systemd unit（`WorkingDirectory=/opt/parking-site`、
+读取 `.env`、`Restart=always`）：
+
+```bash
+cp deploy/parking.service /etc/systemd/system/parking.service
+systemctl daemon-reload && systemctl enable --now parking
+journalctl -u parking -f
+```
+
+`.env` 中至少要写：`SERVER_HOST=127.0.0.1`、`SERVER_PORT=3011`、`SUDA_DATABASE_URL`、
+`FORCE_AUTHN_INNERAPI_DOMAIN=http://127.0.0.1:3011`、`ENABLE_CSRF=false`。
 
 ---
 
