@@ -254,7 +254,53 @@ psql "$SUDA_DATABASE_URL" -f deploy/seed.sql
 
 ---
 
-## 8. 常见故障
+## 8. 子路径部署（部署在已有站点的 /parking 下）
+
+当服务器上已有站点（例如 `ridingwind.cn` 已有 TLS 配置），只想把本应用挂到 `/parking` 时，
+前端必须按子路径构建，否则资源与接口都会打到根路径：
+
+```bash
+# 1) 前端按子路径构建（资源引用与 axios baseURL 都会变成 /parking）
+CLIENT_BASE_PATH=/parking npm run build:client
+
+# 2) 后端照常构建
+npm run build:server
+
+# 3) 生成静态入口（把平台占位符填平，basename 写成 /parking）
+CLIENT_BASE_PATH=/parking node scripts/prepare-static-web.mjs
+```
+
+产物：
+
+- `dist/web/index.html` + `dist/web/assets/` —— 交给 nginx 静态托管
+- `dist/server/` —— Node 服务，只需提供 `/api/*`
+
+Node 服务建议单独监听 3100（不占用 80/443）：
+
+```ini
+# /etc/systemd/system/parking.service
+[Service]
+WorkingDirectory=/opt/parking-site
+EnvironmentFile=/opt/parking-site/.env
+ExecStart=/usr/bin/node dist/server/main.js
+# .env 中：SERVER_HOST=127.0.0.1  SERVER_PORT=3100
+```
+
+nginx 片段见 `deploy/nginx-parking.conf`（`location = /parking` 补斜杠、`/parking/assets/` 静态、
+`/parking/api/` 反代并剥前缀、其余回退到 `index.html`）。并入现有 `server{}` 后：
+
+```bash
+nginx -t && systemctl reload nginx
+```
+
+访问 `https://ridingwind.cn/parking/`，接口为 `https://ridingwind.cn/parking/api/parking`。
+
+> 注意：不要用 Node 的 `ViewController` 渲染入口页。平台会按 appId 推导 basename（得到 `/app/`），
+> 子路径部署下会导致前端路由错乱，因此这里改为静态托管入口页。
+
+---
+
+## 9. 常见故障
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
