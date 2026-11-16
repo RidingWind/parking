@@ -27,6 +27,8 @@ services:
       SERVER_HOST: 0.0.0.0
       SERVER_PORT: 3000
       SUDA_DATABASE_URL: postgresql://parking:${POSTGRES_PASSWORD:-parking_pass}@db:5432/parking
+      # 平台模块启动时强制校验的基础域名，缺失会直接退出
+      FORCE_AUTHN_INNERAPI_DOMAIN: ${PUBLIC_BASE_URL:-http://app:3000}
       TZ: Asia/Shanghai
     depends_on:
       db:

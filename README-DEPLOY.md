@@ -29,7 +29,7 @@ docker-compose.yml  db + app + web 编排
 
 ---
 
-## 2. 与平台环境的三个关键差异（必须先了解）
+## 2. 与平台环境的四个关键差异（必须先了解）
 
 1. **数据库变量名是 `SUDA_DATABASE_URL`**
    平台核心包 `@lark-apaas/fullstack-nestjs-core` 读取的是 `SUDA_DATABASE_URL`，
@@ -48,6 +48,17 @@ docker-compose.yml  db + app + web 编排
 另外：构建产物里的 `index.html` 落在 `dist/client/client/index.html`，
 而 `@Render('index')` 从 views 根目录找 `index.html`，因此构建后需要
 `cp dist/client/client/index.html dist/client/index.html`（Dockerfile 已内置这一步）。
+
+4. **必须设置 `FORCE_AUTHN_INNERAPI_DOMAIN`，并关闭平台 CSRF**
+   平台模块在“平台模式”下启动时会校验基础域名，缺失则直接退出：
+   `Error: 平台模式需要基础域名，请设置环境变量 FORCE_AUTHN_INNERAPI_DOMAIN`。
+   填自己的访问地址即可（容器内可填 `http://app:3000`）。
+   同时平台 CSRF 中间件依赖平台下发的 cookie，脱离平台后 `/api/*` 会被
+   `403 Forbidden，csrf token not found in cookie` 拦掉，
+   因此 `server/app.module.ts` 已改为 `enableCsrf: process.env.ENABLE_CSRF === 'true'`（默认关闭）。
+
+> 以上 4 点均已在本机实测确认：服务能成功启动并监听，首页在补齐 `index.html` 后可正常渲染，
+> 接口不再被 CSRF 拦截。数据库链路的完整验证需真实 PostgreSQL，本机无 PG 环境未做端到端测试。
 
 ---
 
