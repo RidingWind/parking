@@ -1,0 +1,14 @@
+{"cases":[
+  {"id":1,"priority":"p0","description":"打开首页，看到标题「上海停车情报站」和搜索框，地图区域显示Key配置提示"},
+  {"id":2,"priority":"p0","description":"首页停车场列表显示至少10张卡片，每张含名称、区县标签、评分"},
+  {"id":3,"priority":"p0","description":"首页区县筛选选「闵行」，列表只显示闵行区停车场"},
+  {"id":4,"priority":"p0","description":"首页关键词搜索「万象城」，列表显示上海万象城"},
+  {"id":5,"priority":"p1","description":"点击底部导航「列表」，切换到列表页，显示停车场列表"},
+  {"id":6,"priority":"p0","description":"点击底部导航「附近」，显示定位按钮，点击后请求位置权限"},
+  {"id":7,"priority":"p0","description":"点击底部导航「登记」，显示商户登记表单，含名称、区县、地址等字段"},
+  {"id":8,"priority":"p0","description":"点击底部导航「我的」，显示我的页面，有「我的收藏」Tab"},
+  {"id":9,"priority":"p0","description":"点击停车场卡片进入详情页，显示停车场名称、类型标签、情报信息区块"},
+  {"id":10,"priority":"p0","description":"详情页点击星星评分，提交后评分人数增加"},
+  {"id":11,"priority":"p1","description":"详情页发表评论，提交后评论出现在评论列表"},
+  {"id":12,"priority":"p1","description":"详情页点击收藏按钮，心形变为实心，我的页收藏列表出现该停车场"}
+]}
