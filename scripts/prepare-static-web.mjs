@@ -36,7 +36,11 @@ html = html.replace(/JSON\.parse\('\{\{\{__platform__\}\}\}'\)/g, "JSON.parse('{
 // 2) 路由基线：父级 BrowserRouter 会优先读 window.__BASENAME__
 html = html.replace(/\{\{basename\}\}/g, BASE);
 
-// 3) 其余占位符一律填空（三花括号先处理）
+// 3) 应用名：平台原本由 {{appName}} 注入，静态托管下用部署常量兜底
+const APP_TITLE = process.env.APP_TITLE || '上海停车情报站';
+html = html.replace(/\{\{appName\}\}/g, APP_TITLE);
+
+// 4) 其余占位符一律填空（三花括号先处理）
 html = html.replace(/\{\{+([a-zA-Z_][a-zA-Z0-9_]*)\}\}+/g, (m) => {
   console.warn(`  · 占位符置空：${m}`);
   return '';
